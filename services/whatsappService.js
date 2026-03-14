@@ -3,9 +3,9 @@ const axios = require('axios');
 // ============================================================
 // VINTEL WhatsApp Alert Service
 // Routing:
-//   HIGH RISK   → Immediate WhatsApp alert to DSP (DSP_RECIPIENTS)
-//   MEDIUM RISK → Dashboard notification only (no WhatsApp)
-//   LOW RISK    → Log only (no WhatsApp, no dashboard alert)
+//   HIGH RISK   \u2192 Immediate WhatsApp alert to DSP (DSP_RECIPIENTS)
+//   MEDIUM RISK \u2192 Dashboard notification only (no WhatsApp)
+//   LOW RISK    \u2192 Log only (no WhatsApp, no dashboard alert)
 // ============================================================
 
 async function sendWhatsAppMessage(phone, message, apiUrl, token) {
@@ -23,14 +23,14 @@ async function sendWhatsAppMessage(phone, message, apiUrl, token) {
   });
 }
 
-// HIGH RISK → WhatsApp to DSP recipients
+// HIGH RISK \u2192 WhatsApp to DSP recipients
 async function sendHighRiskAlert(alert) {
   const apiUrl = process.env.WHATSAPP_API_URL;
   const token = process.env.WHATSAPP_ACCESS_TOKEN || process.env.WHATSAPP_TOKEN;
 
   // If WhatsApp not configured, skip silently
   if (!apiUrl || !token) {
-    console.log('[WHATSAPP] ⚠️ Not configured — skipping HIGH RISK WhatsApp alert');
+    console.log('[WHATSAPP] \u26A0\uFE0F Not configured \u2014 skipping HIGH RISK WhatsApp alert');
     return false;
   }
 
@@ -41,28 +41,28 @@ async function sendHighRiskAlert(alert) {
     .filter(Boolean);
 
   if (dspRecipients.length === 0) {
-    console.log('[WHATSAPP] ⚠️ No recipients configured — skipping');
+    console.log('[WHATSAPP] \u26A0\uFE0F No recipients configured \u2014 skipping');
     return false;
   }
 
-  const talukLine = alert.taluk ? `\n🏘️ Taluk: ${alert.taluk}` : '';
+  const talukLine = alert.taluk ? `\n\uD83C\uDFD8\uFE0F Taluk: ${alert.taluk}` : '';
 
   const message =
-`🔴 *VINTEL HIGH RISK ALERT*
-━━━━━━━━━━━━━━━━━━━━━━━━
-📰 *${alert.title}*
+`\uD83D\uDD34 *VINTEL HIGH RISK ALERT*
+\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+\uD83D\uDCF0 *${alert.title}*
 
-📂 Source: ${alert.source}
-🏷️ Category: ${(alert.categories || []).join(', ')}
-📍 District: ${alert.district || 'Virudhunagar'}${talukLine}
+\uD83D\uDCC2 Source: ${alert.source}
+\uD83C\uDFF7\uFE0F Category: ${(alert.categories || []).join(', ')}
+\uD83D\uDCCD District: ${alert.district || 'Virudhunagar'}${talukLine}
 
-⚠️ *${alert.classificationReason || 'Immediate action required'}*
+\u26A0\uFE0F *${alert.classificationReason || 'Immediate action required'}*
 
-🔗 ${alert.sourceUrl || 'No link available'}
+\uD83D\uDD17 ${alert.sourceUrl || 'No link available'}
 
-⏰ ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
-━━━━━━━━━━━━━━━━━━━━━━━━
-_VINTEL — Virudhunagar District_
+\u23F0 ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}
+\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
+_VINTEL \u2014 Virudhunagar District_
 _Tamil Nadu Police Intelligence_`;
 
   let sentCount = 0;
@@ -70,18 +70,18 @@ _Tamil Nadu Police Intelligence_`;
     try {
       await sendWhatsAppMessage(phone, message, apiUrl, token);
       sentCount++;
-      console.log(`[WHATSAPP] ✅ HIGH RISK alert → DSP ${phone}`);
+      console.log(`[WHATSAPP] \u2705 HIGH RISK alert \u2192 DSP ${phone}`);
     } catch (err) {
-      console.error(`[WHATSAPP] ❌ Failed → ${phone}: ${err.message}`);
+      console.error(`[WHATSAPP] \u274C Failed \u2192 ${phone}: ${err.message}`);
     }
   }
 
   return sentCount > 0;
 }
 
-// MEDIUM RISK → Dashboard notification only (no WhatsApp)
+// MEDIUM RISK \u2192 Dashboard notification only (no WhatsApp)
 async function handleMediumRiskAlert(alert, io) {
-  console.log(`[ALERT] 🟡 MEDIUM RISK — dashboard notification: ${alert.title?.substring(0, 60)}`);
+  console.log(`[ALERT] \uD83D\uDFE1 MEDIUM RISK \u2014 dashboard notification: ${alert.title?.substring(0, 60)}`);
   if (io) {
     io.emit('mediumRiskAlert', {
       _id: alert._id,
@@ -96,9 +96,9 @@ async function handleMediumRiskAlert(alert, io) {
   return true;
 }
 
-// LOW RISK → Log only
+// LOW RISK \u2192 Log only
 async function handleLowRiskAlert(alert) {
-  console.log(`[ALERT] 🟢 LOW RISK — logged: ${alert.title?.substring(0, 60)}`);
+  console.log(`[ALERT] \uD83D\uDFE2 LOW RISK \u2014 logged: ${alert.title?.substring(0, 60)}`);
   return true;
 }
 
