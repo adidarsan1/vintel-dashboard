@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VINTEL - Virudhunagar Intelligence Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #111827;
+      --bg-card: #1a2332;
+      --bg-hover: #1e293b;
+      --border: #1e3a5f;
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --high: #ef4444;
+      --high-bg: rgba(239,68,68,0.12);
+      --high-border: rgba(239,68,68,0.3);
+      --medium: #f59e0b;
+      --medium-bg: rgba(245,158,11,0.12);
+      --medium-border: rgba(245,158,11,0.3);
+      --low: #22c55e;
+      --low-bg: rgba(34,197,94,0.12);
+      --low-border: rgba(34,197,94,0.3);
+      --scrollbar-bg: #1a2332;
+      --scrollbar-thumb: #334155;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+
+    /* ===== TICKER BAR ===== */
+    .ticker-bar {
+      background: linear-gradient(90deg, #1a0a0a, #2a1010, #1a0a0a);
+      border-bottom: 1px solid var(--high-border);
+      padding: 8px 0;
+      overflow: hidden;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ticker-bar.no-alerts {
+      background: linear-gradient(90deg, #0a1a0a, #102a10, #0a1a0a);
+      border-bottom-color: var(--low-border);
+    }
+    .ticker-content {
+      display: flex;
+      animation: tickerScroll 40s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 24px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .ticker-item .risk-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .ticker-item .risk-dot.HIGH { background: var(--high); box-shadow: 0 0 8px var(--high); }
+    .ticker-item .risk-dot.MEDIUM { background: var(--medium); }
+    .ticker-item .risk-dot.LOW { background: var(--low); }
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-badge {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -1px;
+    }
+    .header-title h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-title p {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: var(--low-bg);
+      border: 1px solid var(--low-border);
+      color: var(--low);
+    }
+    .status-badge .pulse {
+      width: 8px; height: 8px;
+      background: var(--low);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .client-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== STATS PANEL ===== */
+    .stats-panel {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 16px 24px;
+      background: var(--bg-primary);
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .stat-card.high::before { background: var(--high); }
+    .stat-card.medium::before { background: var(--medium); }
+    .stat-card.low::before { background: var(--low); }
+    .stat-card.total::before { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+    }
+    .stat-card.high .stat-value { color: var(--high); }
+    .stat-card.medium .stat-value { color: var(--medium); }
+    .stat-card.low .stat-value { color: var(--low); }
+    .stat-card.total .stat-value { color: var(--accent-cyan); }
+
+    /* ===== FILTERS ===== */
+    .filters-bar {
+      padding: 12px 24px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    select, .search-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    select:hover, .search-input:hover { border-color: var(--accent-blue); }
+    select:focus, .search-input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+    .search-input {
+      width: 200px;
+    }
+    .filter-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent-blue);
+      color: var(--text-primary);
+    }
+    .filter-btn.active {
+      background: rgba(59,130,246,0.15);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    /* ===== ALERTS FEED ===== */
+    .main-content {
+      padding: 16px 24px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 16px;
+      min-height: calc(100vh - 300px);
+    }
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .feed-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .feed-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .alerts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: calc(100vh - 340px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .alert-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.2s;
+      cursor: default;
+      position: relative;
+      animation: slideIn 0.3s ease-out;
+    }
+    .alert-card:hover {
+      border-color: var(--accent-blue);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .alert-card.HIGH {
+      border-left: 3px solid var(--high);
+      background: var(--high-bg);
+    }
+    .alert-card.MEDIUM {
+      border-left: 3px solid var(--medium);
+      background: var(--medium-bg);
+    }
+    .alert-card.LOW {
+      border-left: 3px solid var(--low);
+      background: var(--low-bg);
+    }
+    .alert-card.new-alert {
+      animation: flashIn 1s ease-out;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes flashIn {
+      0% { box-shadow: 0 0 20px rgba(239,68,68,0.6); }
+      100% { box-shadow: none; }
+    }
+
+    .alert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .alert-risk-badge {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .alert-risk-badge.HIGH { background: var(--high); color: white; }
+    .alert-risk-badge.MEDIUM { background: var(--medium); color: #1a1a1a; }
+    .alert-risk-badge.LOW { background: var(--low); color: #1a1a1a; }
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+    .alert-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .alert-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .alert-source {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent-cyan);
+      background: rgba(6,182,212,0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .alert-category {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(59,130,246,0.15);
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .alert-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-left: auto;
+    }
+    .alert-district {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(168,85,247,0.15);
+      color: #a855f7;
+      font-weight: 500;
+    }
+    .alert-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+    .ack-btn {
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .ack-btn:hover {
+      background: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+    .ack-btn.acked {
+      background: var(--low-bg);
+      color: var(--low);
+      border-color: var(--low-border);
+      cursor: default;
+    }
+    .alert-link {
+      font-size: 11px;
+      color: var(--accent-blue);
+      text-decoration: none;
+      padding: 4px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .alert-link:hover {
+      background: rgba(59,130,246,0.1);
+      border-color: var(--accent-blue);
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .category-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .category-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    .category-row:hover { background: var(--bg-hover); }
+    .category-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    .category-count {
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      background: var(--bg-primary);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .source-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .source-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .source-name { color: var(--text-secondary); }
+    .source-count {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+    .recent-high {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .recent-high-item {
+      padding: 8px;
+      background: var(--high-bg);
+      border: 1px solid var(--high-border);
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .recent-high-item .rh-title {
+      font-weight: 600;
+      color: var(--high);
+      margin-bottom: 4px;
+    }
+    .recent-high-item .rh-time {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ===== MEDIUM RISK TOAST ===== */
+    .medium-toast {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      background: #1a1600;
+      border: 1px solid var(--medium-border);
+      border-left: 4px solid var(--medium);
+      border-radius: 10px;
+      padding: 14px 18px;
+      z-index: 998;
+      max-width: 340px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      animation: toastIn 0.3s ease-out;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .toast-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--medium);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .toast-body {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ===== ALERT TALUK BADGE ===== */
+    .alert-taluk {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(99,102,241,0.15);
+      color: #818cf8;
+      font-weight: 500;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state-text { font-size: 14px; text-align: center; }
+
+    /* ===== HIGH RISK OVERLAY ===== */
+    .high-risk-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(239,68,68,0.08);
+      z-index: 999;
+      pointer-events: none;
+      animation: redFlash 2s ease-in-out;
+    }
+    .high-risk-overlay.active { display: block; }
+    @keyframes redFlash {
+      0%, 100% { opacity: 0; }
+      25%, 75% { opacity: 1; }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .main-content { grid-template-columns: 1fr; }
+      .sidebar { display: grid; grid-template-columns: repeat(2, 1fr); }
+      .stats-panel { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .header { padding: 12px 16px; }
+      .stats-panel { grid-template-columns: 1fr 1fr; padding: 12px 16px; }
+      .main-content { padding: 12px 16px; }
+      .filters-bar { padding: 10px 16px; }
+      .sidebar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HIGH RISK FLASH OVERLAY -->
+  <div class="high-risk-overlay" id="highRiskOverlay"></div>
+
+  <!-- TICKER BAR -->
+  <div class="ticker-bar" id="tickerBar">
+    <div class="ticker-content" id="tickerContent">
+      <span class="ticker-item">
+        <span class="risk-dot LOW"></span>
+        VINTEL Intelligence Dashboard - Monitoring Active - Awaiting Alerts...
+      </span>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-badge">V</div>
+      <div class="header-title">
+        <h1>VINTEL</h1>
+        <p>Virudhunagar Intelligence Dashboard &bull; Tamil Nadu Police</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-badge">
+        <div class="pulse"></div>
+        <span>LIVE</span>
+      </div>
+      <span class="client-count" id="clientCount">0 connected</span>
+    </div>
+  </div>
+
+  <!-- STATS PANEL -->
+  <div class="stats-panel">
+    <div class="stat-card high">
+      <div class="stat-label">High Risk Today</div>
+      <div class="stat-value" id="statHigh">0</div>
+    </div>
+    <div class="stat-card medium">
+      <div class="stat-label">Medium Risk Today</div>
+      <div class="stat-value" id="statMedium">0</div>
+    </div>
+    <div class="stat-card low">
+      <div class="stat-label">Low Risk Today</div>
+      <div class="stat-value" id="statLow">0</div>
+    </div>
+    <div class="stat-card total">
+      <div class="stat-label">Total Alerts Today</div>
+      <div class="stat-value" id="statTotal">0</div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <span class="filter-label">Risk:</span>
+      <select id="filterRisk">
+        <option value="">All Levels</option>
+        <option value="HIGH">HIGH</option>
+        <option value="MEDIUM">MEDIUM</option>
+        <option value="LOW">LOW</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Source:</span>
+      <select id="filterSource">
+        <option value="">All Sources</option>
+        <option value="Polimer News">Polimer News</option>
+        <option value="Thinamani">Thinamani</option>
+        <option value="Thinamalar">Thinamalar</option>
+        <option value="Thinakaran">Thinakaran</option>
+        <option value="News18 Tamil">News18 Tamil</option>
+        <option value="News7 Tamil">News7 Tamil</option>
+        <option value="Puthiya Thalaimurai">Puthiya Thalaimurai</option>
+        <option value="The Hindu">The Hindu</option>
+        <option value="Indian Express">Indian Express</option>
+        <option value="Twitter/X">Twitter/X</option>
+        <option value="YouTube">YouTube</option>
+        <option value="Google News">Google News</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Category:</span>
+      <select id="filterCategory">
+        <option value="">All Categories</option>
+        <option value="POCSO">POCSO</option>
+        <option value="Weapons">Weapons</option>
+        <option value="Caste">Caste</option>
+        <option value="Religious">Religious</option>
+        <option value="Protest">Protest</option>
+        <option value="Firearms">Firearms</option>
+        <option value="Gang">Gang</option>
+        <option value="Murder">Murder</option>
+        <option value="Theft">Theft</option>
+        <option value="Robbery">Robbery</option>
+        <option value="Drugs">Drugs</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Taluk:</span>
+      <select id="filterTaluk">
+        <option value="">All Taluks</option>
+        <option value="Virudhunagar">Virudhunagar</option>
+        <option value="Srivilliputhur">Srivilliputhur</option>
+        <option value="Rajapalayam">Rajapalayam</option>
+        <option value="Sivakasi">Sivakasi</option>
+        <option value="Sattur">Sattur</option>
+        <option value="Aruppukkottai">Aruppukkottai</option>
+        <option value="Tiruchuli">Tiruchuli</option>
+        <option value="Watrap">Watrap</option>
+        <option value="Vembakottai">Vembakottai</option>
+        <option value="Krishnankoil">Krishnankoil</option>
+      </select>
+    </div>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search alerts...">
+    <button class="filter-btn" id="btnRefresh" onclick="refreshData()">Refresh</button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+    <div class="feed-section">
+      <div class="feed-header">
+        <span class="feed-title">Intelligence Feed</span>
+        <span class="feed-count" id="feedCount">0 alerts</span>
+      </div>
+      <div class="alerts-container" id="alertsContainer">
+        <div class="empty-state">
+          <div class="empty-state-icon">&#128737;</div>
+          <div class="empty-state-text">
+            Monitoring active. Waiting for intelligence data...<br>
+            <small>Feeds are scanned every 5 minutes</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-title">Categories</div>
+        <div class="category-list" id="categoryList">
+          <div style="font-size:12px;color:var(--text-muted);">Loading...</div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Sources</div>
+        <div class="source-list" id="sourceList">
+          <div style="font-size:12px;color:var(--text-muted);">Loading...</div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-title">Recent High Risk</div>
+        <div class="recent-high" id="recentHigh">
+          <div style="font-size:12px;color:var(--text-muted);">No high risk alerts</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO ALERT -->
+  <audio id="alertSound" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgip6markup" type="audio/wav">
+  </audio>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    // ===== STATE =====
+    let allAlerts = [];
+    let stats = { high: 0, medium: 0, low: 0, total: 0 };
+    const alertSoundCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // ===== SOCKET CONNECTION =====
+    const socket = io({
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 1000
+    });
+
+    socket.on('connect', () => {
+      console.log('[VINTEL] Connected to server');
+      document.getElementById('clientCount').textContent = 'Connected';
+    });
+
+    socket.on('disconnect', () => {
+      document.getElementById('clientCount').textContent = 'Reconnecting...';
+    });
+
+    // ===== INITIAL DATA =====
+    socket.on('initialData', (data) => {
+      allAlerts = data.alerts || [];
+      stats = data.stats || { high: 0, medium: 0, low: 0, total: 0 };
+      updateStats();
+      renderAlerts();
+      updateTicker();
+      updateSidebar();
+    });
+
+    // ===== NEW ALERT =====
+    socket.on('newAlert', (alert) => {
+      alert._isNew = true;
+      allAlerts.unshift(alert);
+      updateSidebar();
+      renderAlerts();
+      updateTicker();
+    });
+
+    // ===== HIGH RISK ALERT =====
+    socket.on('highRiskAlert', (alert) => {
+      playAlertSound();
+      showHighRiskFlash();
+    });
+
+    // ===== MEDIUM RISK — dashboard notification (no WhatsApp per routing spec) =====
+    socket.on('mediumRiskAlert', (alert) => {
+      showMediumToast(alert);
+    });
+
+    // ===== STATS UPDATE =====
+    socket.on('statsUpdate', (newStats) => {
+      stats = newStats;
+      updateStats();
+    });
+
+    // ===== ACKNOWLEDGED =====
+    socket.on('alertAcknowledged', (alert) => {
+      const idx = allAlerts.findIndex(a => a._id === alert._id);
+      if (idx !== -1) {
+        allAlerts[idx] = alert;
+        renderAlerts();
+      }
+    });
+
+    // ===== RENDER FUNCTIONS =====
+    function updateStats() {
+      document.getElementById('statHigh').textContent = stats.high || 0;
+      document.getElementById('statMedium').textContent = stats.medium || 0;
+      document.getElementById('statLow').textContent = stats.low || 0;
+      document.getElementById('statTotal').textContent = stats.total || 0;
+    }
+
+    function getFilteredAlerts() {
+      const riskFilter = document.getElementById('filterRisk').value;
+      const sourceFilter = document.getElementById('filterSource').value;
+      const categoryFilter = document.getElementById('filterCategory').value;
+      const talukFilter = document.getElementById('filterTaluk').value;
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+
+      return allAlerts.filter(a => {
+        if (riskFilter && a.riskLevel !== riskFilter) return false;
+        if (sourceFilter && a.source !== sourceFilter) return false;
+        if (categoryFilter && !(a.categories || []).includes(categoryFilter)) return false;
+        if (talukFilter && a.taluk !== talukFilter) return false;
+        if (searchQuery && !`${a.title} ${a.description}`.toLowerCase().includes(searchQuery)) return false;
+        return true;
+      });
+    }
+
+    function renderAlerts() {
+      const container = document.getElementById('alertsContainer');
+      const filtered = getFilteredAlerts();
+      document.getElementById('feedCount').textContent = `${filtered.length} alerts`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">&#128737;</div>
+            <div class="empty-state-text">
+              No alerts match current filters.<br>
+              <small>Try adjusting your filters or wait for new data</small>
+            </div>
+          </div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(alert => {
+        const time = new Date(alert.createdAt).toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit', minute: '2-digit',
+          day: '2-digit', month: 'short'
+        });
+        const cats = (alert.categories || []).map(c =>
+          `<span class="alert-category">${escHtml(c)}</span>`
+        ).join('');
+        const isNew = alert._isNew ? 'new-alert' : '';
+        const ackBtn = alert.acknowledged
+          ? `<button class="ack-btn acked">&#10003; Acknowledged</button>`
+          : `<button class="ack-btn" onclick="acknowledgeAlert('${alert._id}')">Acknowledge</button>`;
+        const linkBtn = alert.sourceUrl
+          ? `<a class="alert-link" href="${escHtml(alert.sourceUrl)}" target="_blank" rel="noopener">View Source &#8599;</a>`
+          : '';
+        const talukBadge = alert.taluk
+          ? `<span class="alert-taluk">&#128205; ${escHtml(alert.taluk)}</span>`
+          : '';
+        const riskLabel = alert.riskLevel === 'HIGH'
+          ? '&#128308; HIGH'
+          : alert.riskLevel === 'MEDIUM' ? '&#128992; MEDIUM' : '&#128994; LOW';
+        const sourceIcon = alert.source === 'YouTube' ? '&#9654; '
+          : alert.source === 'Google News' ? '&#128240; '
+          : alert.source === 'Twitter/X' ? '&#128038; ' : '';
+
+        return `
+          <div class="alert-card ${alert.riskLevel} ${isNew}">
+            <div class="alert-header">
+              <span class="alert-title">${escHtml(alert.title)}</span>
+              <span class="alert-risk-badge ${alert.riskLevel}">${riskLabel}</span>
+            </div>
+            <div class="alert-desc">${escHtml(alert.description || alert.classificationReason || '')}</div>
+            <div class="alert-meta">
+              <span class="alert-source">${sourceIcon}${escHtml(alert.source)}</span>
+              ${cats}
+              <span class="alert-district">&#128205; ${escHtml(alert.district || 'Tamil Nadu')}</span>
+              ${talukBadge}
+              <span class="alert-time">${time}</span>
+            </div>
+            <div class="alert-actions">${ackBtn}${linkBtn}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function updateTicker() {
+      const highAlerts = allAlerts.filter(a => a.riskLevel === 'HIGH' || a.riskLevel === 'MEDIUM').slice(0, 15);
+      const tickerBar = document.getElementById('tickerBar');
+      const tickerContent = document.getElementById('tickerContent');
+
+      if (highAlerts.length === 0) {
+        tickerBar.className = 'ticker-bar no-alerts';
+        tickerContent.innerHTML = `
+          <span class="ticker-item"><span class="risk-dot LOW"></span>VINTEL - All Clear - No Active High Risk Alerts - Monitoring Continues...</span>
+          <span class="ticker-item"><span class="risk-dot LOW"></span>VINTEL - All Clear - No Active High Risk Alerts - Monitoring Continues...</span>`;
+        return;
+      }
+
+      tickerBar.className = 'ticker-bar';
+      const items = highAlerts.map(a =>
+        `<span class="ticker-item"><span class="risk-dot ${a.riskLevel}"></span>${escHtml(a.title.substring(0, 80))}</span>`
+      ).join('');
+      tickerContent.innerHTML = items + items; // Duplicate for seamless scroll
+    }
+
+    function updateSidebar() {
+      // Category counts
+      const catCounts = {};
+      allAlerts.forEach(a => {
+        (a.categories || []).forEach(c => {
+          catCounts[c] = (catCounts[c] || 0) + 1;
+        });
+      });
+      const catList = document.getElementById('categoryList');
+      const catEntries = Object.entries(catCounts).sort((a, b) => b[1] - a[1]);
+      catList.innerHTML = catEntries.length > 0
+        ? catEntries.map(([name, count]) => `
+            <div class="category-row" onclick="document.getElementById('filterCategory').value='${name}';renderAlerts();">
+              <span class="category-name">${name}</span>
+              <span class="category-count">${count}</span>
+            </div>`).join('')
+        : '<div style="font-size:12px;color:var(--text-muted);">No data yet</div>';
+
+      // Source counts
+      const srcCounts = {};
+      allAlerts.forEach(a => { srcCounts[a.source] = (srcCounts[a.source] || 0) + 1; });
+      const srcList = document.getElementById('sourceList');
+      const srcEntries = Object.entries(srcCounts).sort((a, b) => b[1] - a[1]);
+      srcList.innerHTML = srcEntries.length > 0
+        ? srcEntries.map(([name, count]) => `
+            <div class="source-row">
+              <span class="source-name">${escHtml(name)}</span>
+              <span class="source-count">${count}</span>
+            </div>`).join('')
+        : '<div style="font-size:12px;color:var(--text-muted);">No data yet</div>';
+
+      // Recent high risk
+      const highAlerts = allAlerts.filter(a => a.riskLevel === 'HIGH').slice(0, 5);
+      const recentHigh = document.getElementById('recentHigh');
+      recentHigh.innerHTML = highAlerts.length > 0
+        ? highAlerts.map(a => {
+            const t = new Date(a.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
+            return `<div class="recent-high-item"><div class="rh-title">${escHtml(a.title.substring(0, 60))}</div><div class="rh-time">${a.source} &bull; ${t}</div></div>`;
+          }).join('')
+        : '<div style="font-size:12px;color:var(--text-muted);">No high risk alerts</div>';
+    }
+
+    // ===== MEDIUM RISK TOAST (dashboard-only per routing spec) =====
+    let toastTimeout = null;
+    function showMediumToast(alert) {
+      // Remove existing toast
+      const existing = document.querySelector('.medium-toast');
+      if (existing) existing.remove();
+      if (toastTimeout) clearTimeout(toastTimeout);
+
+      const toast = document.createElement('div');
+      toast.className = 'medium-toast';
+      toast.innerHTML = `
+        <div class="toast-header">&#128992; MEDIUM RISK — Monitor Closely</div>
+        <div class="toast-body">
+          <strong>${escHtml((alert.title || '').substring(0, 80))}</strong><br>
+          <span style="color:var(--text-muted)">${escHtml(alert.source)} · ${escHtml(alert.district || 'Virudhunagar')}</span>
+        </div>`;
+      document.body.appendChild(toast);
+
+      // Auto-dismiss after 8 seconds
+      toastTimeout = setTimeout(() => {
+        if (toast.parentNode) toast.remove();
+      }, 8000);
+    }
+
+    // ===== ACTIONS =====
+    function acknowledgeAlert(id) {
+      socket.emit('acknowledge', { alertId: id, officer: 'Dashboard Officer' });
+    }
+
+    function refreshData() {
+      socket.emit('requestRefresh');
+    }
+
+    // ===== ALERT SOUND =====
+    function playAlertSound() {
+      try {
+        const osc = alertSoundCtx.createOscillator();
+        const gain = alertSoundCtx.createGain();
+        osc.connect(gain);
+        gain.connect(alertSoundCtx.destination);
+        osc.frequency.setValueAtTime(880, alertSoundCtx.currentTime);
+        osc.frequency.setValueAtTime(660, alertSoundCtx.currentTime + 0.15);
+        osc.frequency.setValueAtTime(880, alertSoundCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.3, alertSoundCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, alertSoundCtx.currentTime + 0.8);
+        osc.start(alertSoundCtx.currentTime);
+        osc.stop(alertSoundCtx.currentTime + 0.8);
+      } catch (e) { console.warn('Sound failed:', e); }
+    }
+
+    function showHighRiskFlash() {
+      const overlay = document.getElementById('highRiskOverlay');
+      overlay.classList.add('active');
+      setTimeout(() => overlay.classList.remove('active'), 2000);
+    }
+
+    // ===== FILTER LISTENERS =====
+    ['filterRisk', 'filterSource', 'filterCategory', 'filterTaluk'].forEach(id => {
+      document.getElementById(id).addEventListener('change', renderAlerts);
+    });
+    document.getElementById('searchInput').addEventListener('input', renderAlerts);
+
+    // ===== UTILITY =====
+    function escHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ===== KEEP ALIVE =====
+    setInterval(() => {
+      if (socket.connected) {
+        document.getElementById('clientCount').textContent = 'Connected';
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
