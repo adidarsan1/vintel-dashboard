@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 // ============================
 let connectedClients = 0;
 
-if.on('connection', (socket) => {
+io.on('connection', (socket) => {
   connectedClients++;
   console.log(`[SOCKET]  Client connected (${connectedClients} total)`);
 
