@@ -59,7 +59,7 @@ let connectedClients = 0;
 
 if.on('connection', (socket) => {
   connectedClients++;
-  console.log(`[SOCKET] 🟂 Client connected (${connectedClients} total)`);
+  console.log(`[SOCKET]  Client connected (${connectedClients} total)`);
 
   // Send initial data on connect
   sendInitialData(socket);
@@ -89,7 +89,7 @@ if.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     connectedClients--;
-    console.log(`[SOCKET] 🔂 Client disconnected (${connectedClients} total)`);
+    console.log(`[SOCKET]  Client disconnected (${connectedClients} total)`);
   });
 });
 
@@ -127,7 +127,7 @@ async function getStats() {
 // ============================
 async function runIntelligencePipeline() {
   console.log('\n[PIPELINE] ================================================');
-  console.log('[PIPELINE] � Starting intelligence scan...');
+  console.log('[PIPELINE]  Starting intelligence scan...');
   console.log('[PIPELINE] ===============================================');
 
   try {
@@ -145,11 +145,11 @@ async function runIntelligencePipeline() {
     ];
 
     if (allItems.length === 0) {
-      console.log('[PIPELINE] ℹ️ No new items found');
+      console.log('[PIPELINE] [i] No new items found');
       return;
     }
 
-    console.log(`[PIPELINE] 📙 ${allItems.length} new items to classify`);
+    console.log(`[PIPELINE] [*] ${allItems.length} new items to classify`);
 
     // Step 2: Classify with GPT-4
     const classified = await classifyBatch(allItems);
@@ -178,9 +178,9 @@ async function runIntelligencePipeline() {
         // Emit to all connected clients
         io.emit('newAlert', alert.toObject());
 
-        // ─ Alert routing per risk level ─────────────────────
+        // - Alert routing per risk level ---------------------
         if (item.riskLevel === 'HIGH') {
-          // HIGH 🔠 → Sound alert + WhatsApp to DSP immediately
+          // HIGH   Sound alert + WhatsApp to DSP immediately
           highCount++;
           io.emit('highRiskAlert', alert.toObject());
           const sent = await sendHighRiskAlert(alert.toObject());
@@ -189,15 +189,15 @@ async function runIntelligencePipeline() {
             await alert.save();
           }
         } else if (item.riskLevel === 'MEDIUM') {
-          // MEDIUM 🟡 → Dashboard notification only (no WhatsApp)
+          // MEDIUM   Dashboard notification only (no WhatsApp)
           await handleMediumRiskAlert(alert.toObject(), io);
         } else {
-          // LOW 💜 → Log only
+          // LOW   Log only
           await handleLowRiskAlert(alert.toObject());
         }
       } catch (err) {
         if (err.code !== 11000) { // Ignore duplicate key errors
-          console.error(`[PIPELINE] ❌ Save error: ${err.message}`);
+          console.error(`[PIPELINE]  Save error: ${err.message}`);
         }
       }
     }
@@ -206,11 +206,11 @@ async function runIntelligencePipeline() {
     const stats = await getStats();
     io.emit('statsUpdate', stats);
 
-    console.log(`[PIPELINE] ✅ Pipeline complete: ${classified.length} processed, ${highCount} HIGH RISK`);
+    console.log(`[PIPELINE]  Pipeline complete: ${classified.length} processed, ${highCount} HIGH RISK`);
     console.log('[PIPELINE] ===============================================\n');
 
   } catch (err) {
-    console.error(`[PIPELINE] ❌ Pipeline error: ${err.message}`);
+    console.error(`[PIPELINE]  Pipeline error: ${err.message}`);
   }
 }
 
@@ -219,7 +219,7 @@ async function runIntelligencePipeline() {
 // ============================
 function startScheduler() {
   const interval = process.env.RSS_POLL_INTERVAL || 5;
-  console.log(`[CRON] ⟰ Scheduling intelligence scan every ${interval} minutes`);
+  console.log(`[CRON]  Scheduling intelligence scan every ${interval} minutes`);
 
   cron.schedule(`*/${interval} * * * *`, () => {
     runIntelligencePipeline();
@@ -239,20 +239,20 @@ async function start() {
   try {
     // Connect to MongoDB
     await mongoose.connect(MONGODB_URI);
-    console.log('[DB] ✅ MongoDB connected');
+    console.log('[DB]  MongoDB connected');
 
     // Start server
     server.listen(PORT, () => {
       console.log(`
-┌────────────────────────────────────────────────┐│                                            │
-│    🛯️  VINTEL - Intelligence Dashboard               │
-│   Virudhunagar District, Tamil Nadu Police       │
-│                                               │
-│   Server: http://localhost:${PORT}               │
-│   Status: OPERATIONAL                            │
-│   Mode:   ${process.env.NODE_ENV || 'development'}                         │
-│                                               │
-└────────────────────────────────────────────────┘
+------------------------------------------------                                            
+      VINTEL - Intelligence Dashboard               
+   Virudhunagar District, Tamil Nadu Police       
+                                               
+   Server: http://localhost:${PORT}               
+   Status: OPERATIONAL                            
+   Mode:   ${process.env.NODE_ENV || 'development'}                         
+                                               
+------------------------------------------------
       `);
 
       // Start the intelligence pipeline
@@ -260,7 +260,7 @@ async function start() {
     });
 
   } catch (err) {
-    console.error('[STARTUP] ❌ Failed to start:', err.message);
+    console.error('[STARTUP]  Failed to start:', err.message);
     process.exit(1);
   }
 }
