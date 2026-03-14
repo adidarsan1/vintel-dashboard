@@ -29,15 +29,15 @@ Detected Keywords: ${alertData.keywords?.join(', ') || 'none'}
 Detected Categories: ${alertData.categories?.join(', ') || 'none'}
 
 KEY INTELLIGENCE KEYWORDS TO WATCH:
-Tamil: கொலை, கொள்ளை, கற்பழிப்பு, ஆயுதம், ஜாதி கலவரம், மத கலவரம், போராட்டம், கும்பல், துப்பாக்கி, அரிவாள், போதைபொருள்
+Tamil: \u0B95\u0BCA\u0BB2\u0BC8, \u0B95\u0BCA\u0BB3\u0BCD\u0BB3\u0BC8, \u0B95\u0BB1\u0BCD\u0BAA\u0BB4\u0BBF\u0BAA\u0BCD\u0BAA\u0BC1, \u0B86\u0BAF\u0BC1\u0BA4\u0BAE\u0BCD, \u0B9C\u0BBE\u0BA4\u0BBF \u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD, \u0BAE\u0BA4 \u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD, \u0BAA\u0BCB\u0BB0\u0BBE\u0B9F\u0BCD\u0B9F\u0BAE\u0BCD, \u0B95\u0BC1\u0BAE\u0BCD\u0BAA\u0BB2\u0BCD, \u0BA4\u0BC1\u0BAA\u0BCD\u0BAA\u0BBE\u0B95\u0BCD\u0B95\u0BBF, \u0B85\u0BB0\u0BBF\u0BB5\u0BBE\u0BB3\u0BCD, \u0BAA\u0BCB\u0BA4\u0BC8\u0BAA\u0BCA\u0BB0\u0BC1\u0BB3\u0BCD
 English: murder, robbery, POCSO, weapon, caste violence, religious riot, protest, gang, firearms, aruval, drugs, rowdy
 
 VIRUDHUNAGAR DISTRICT TALUKS: Virudhunagar, Srivilliputhur, Rajapalayam, Sivakasi, Sattur, Aruppukkottai, Tiruchuli, Watrap, Vembakottai, Krishnankoil
 
 Classify the risk level as:
-- HIGH 🔴: Immediate threat to life, active violence, POCSO/rape cases, firearms incidents, communal/caste riots, murder, ongoing crime, gang war — requires IMMEDIATE DSP action
-- MEDIUM 🟡: Potential threat, protests planned, gang activity, theft/robbery, caste tensions, drug seizure, weapons recovered — monitor closely
-- LOW 🟢: General crime reports, past incidents, routine arrests, routine law enforcement news — log only
+- HIGH \uD83D\uDD34: Immediate threat to life, active violence, POCSO/rape cases, firearms incidents, communal/caste riots, murder, ongoing crime, gang war \u2014 requires IMMEDIATE DSP action
+- MEDIUM \uD83D\uDFE1: Potential threat, protests planned, gang activity, theft/robbery, caste tensions, drug seizure, weapons recovered \u2014 monitor closely
+- LOW \uD83D\uDFE2: General crime reports, past incidents, routine arrests, routine law enforcement news \u2014 log only
 
 Respond in JSON format ONLY:
 {
@@ -68,7 +68,7 @@ Valid categories: POCSO, Weapons, Caste, Religious, Protest, Firearms, Gang, Mur
       taluk: result.taluk || alertData.taluk || null
     };
   } catch (err) {
-    console.error(`[CLASSIFIER] ❌ GPT-4 error: ${err.message}`);
+    console.error(`[CLASSIFIER] \u274C GPT-4 error: ${err.message}`);
     return fallbackClassify(alertData);
   }
 }
@@ -82,10 +82,10 @@ function fallbackClassify(alertData) {
   let riskLevel = 'LOW';
   let reason = 'Rule-based: routine information';
 
-  // HIGH RISK triggers — per spec
+  // HIGH RISK triggers \u2014 per spec
   const highTriggers = [
     'pocso', 'murder', 'firearms', 'bomb', 'explosive', 'riot', 'kidnap', 'rape',
-    'கொலை', 'கற்பழிப்பு', 'துப்பாக்கி', 'ஜாதி கலவரம்', 'மத கலவரம்',
+    '\u0B95\u0BCA\u0BB2\u0BC8', '\u0B95\u0BB1\u0BCD\u0BAA\u0BB4\u0BBF\u0BAA\u0BCD\u0BAA\u0BC1', '\u0BA4\u0BC1\u0BAA\u0BCD\u0BAA\u0BBE\u0B95\u0BCD\u0B95\u0BBF', '\u0B9C\u0BBE\u0BA4\u0BBF \u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD', '\u0BAE\u0BA4 \u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD',
     'caste violence', 'religious riot', 'gang war', 'encounter', 'firing'
   ];
   if (highTriggers.some(t => kws.includes(t) || text.includes(t)) ||
@@ -93,11 +93,11 @@ function fallbackClassify(alertData) {
     riskLevel = 'HIGH';
     reason = 'Rule-based: critical crime/safety keywords detected';
   }
-  // MEDIUM RISK triggers — per spec
+  // MEDIUM RISK triggers \u2014 per spec
   else if ([
     'gang', 'rowdy', 'protest', 'caste', 'religious', 'weapon', 'robbery', 'theft',
-    'drugs', 'aruval', 'drug', 'narcotic', 'ganja', 'கொள்ளை', 'போராட்டம்', 'கும்பல்',
-    'ஆயுதம்', 'அரிவாள்', 'போதைபொருள்', 'கஞ்சா', 'ரவுடி'
+    'drugs', 'aruval', 'drug', 'narcotic', 'ganja', '\u0B95\u0BCA\u0BB3\u0BCD\u0BB3\u0BC8', '\u0BAA\u0BCB\u0BB0\u0BBE\u0B9F\u0BCD\u0B9F\u0BAE\u0BCD', '\u0B95\u0BC1\u0BAE\u0BCD\u0BAA\u0BB2\u0BCD',
+    '\u0B86\u0BAF\u0BC1\u0BA4\u0BAE\u0BCD', '\u0B85\u0BB0\u0BBF\u0BB5\u0BBE\u0BB3\u0BCD', '\u0BAA\u0BCB\u0BA4\u0BC8\u0BAA\u0BCA\u0BB0\u0BC1\u0BB3\u0BCD', '\u0B95\u0B9E\u0BCD\u0B9A\u0BBE', '\u0BB0\u0BB5\u0BC1\u0B9F\u0BBF'
   ].some(t => kws.includes(t) || text.includes(t))) {
     riskLevel = 'MEDIUM';
     reason = 'Rule-based: significant law enforcement keywords detected';
