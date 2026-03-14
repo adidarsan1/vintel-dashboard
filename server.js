@@ -261,7 +261,7 @@ async function start() {
 
   } catch (err) {
     console.error('[STARTUP]  Failed to start:', err.message);
-    process.exit(1);
+    console.warn('[STARTUP] Continuing without MongoDB - alerts will not be stored');
   }
 }
 
