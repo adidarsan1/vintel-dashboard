@@ -8,9 +8,9 @@ const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 // Intelligence filter keywords for YouTube video relevance check
 const RELEVANCE_KEYWORDS = [
   // Tamil
-  'கொலை', 'கொள்ளை', 'கற்பழிப்பு', 'ஆயுதம்', 'ஜாதி கலவரம்',
-  'மத கலவரம்', 'போராட்டம்', 'கும்பல்', 'துப்பாக்கி', 'அரிவாள்',
-  'போதைபொருள்', 'கலவரம்', 'கைது', 'குற்றம்',
+  '\u0B95\u0BCA\u0BB2\u0BC8', '\u0B95\u0BCA\u0BB3\u0BCD\u0BB3\u0BC8', '\u0B95\u0BB1\u0BCD\u0BAA\u0BB4\u0BBF\u0BAA\u0BCD\u0BAA\u0BC1', '\u0B86\u0BAF\u0BC1\u0BA4\u0BAE\u0BCD', '\u0B9C\u0BBE\u0BA4\u0BBF \u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD',
+  '\u0BAE\u0BA4 \u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD', '\u0BAA\u0BCB\u0BB0\u0BBE\u0B9F\u0BCD\u0B9F\u0BAE\u0BCD', '\u0B95\u0BC1\u0BAE\u0BCD\u0BAA\u0BB2\u0BCD', '\u0BA4\u0BC1\u0BAA\u0BCD\u0BAA\u0BBE\u0B95\u0BCD\u0B95\u0BBF', '\u0B85\u0BB0\u0BBF\u0BB5\u0BBE\u0BB3\u0BCD',
+  '\u0BAA\u0BCB\u0BA4\u0BC8\u0BAA\u0BCA\u0BB0\u0BC1\u0BB3\u0BCD', '\u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD', '\u0B95\u0BC8\u0BA4\u0BC1', '\u0B95\u0BC1\u0BB1\u0BCD\u0BB1\u0BAE\u0BCD',
   // English
   'murder', 'robbery', 'pocso', 'weapon', 'caste violence', 'religious riot',
   'protest', 'gang', 'firearms', 'aruval', 'drugs', 'rowdy', 'crime',
@@ -61,15 +61,15 @@ function detectCategories(matchedKws = []) {
 async function fetchYouTubeVideos() {
   const apiKey = process.env.YOUTUBE_API_KEY;
   if (!apiKey) {
-    console.log('[YOUTUBE] ⚠️ YOUTUBE_API_KEY not configured — skipping');
+    console.log('[YOUTUBE] \u26A0\uFE0F YOUTUBE_API_KEY not configured \u2014 skipping');
     return [];
   }
 
   // Search queries per spec
   const searchQueries = [
-    'விருதுநகர்',
+    '\u0BB5\u0BBF\u0BB0\u0BC1\u0BA4\u0BC1\u0BA8\u0B95\u0BB0\u0BCD',
     'Virudhunagar',
-    'விருதுநகர் செய்தி'
+    '\u0BB5\u0BBF\u0BB0\u0BC1\u0BA4\u0BC1\u0BA8\u0B95\u0BB0\u0BCD \u0B9A\u0BC6\u0BAF\u0BCD\u0BA4\u0BBF'
   ];
 
   const results = [];
@@ -77,7 +77,7 @@ async function fetchYouTubeVideos() {
 
   for (const q of searchQueries) {
     try {
-      console.log(`[YOUTUBE] 🔍 Searching: "${q}"`);
+      console.log(`[YOUTUBE] \uD83D\uDD0D Searching: "${q}"`);
 
       const response = await axios.get(`${YOUTUBE_API_BASE}/search`, {
         params: {
@@ -136,10 +136,10 @@ async function fetchYouTubeVideos() {
       }
     } catch (err) {
       if (err.response?.status === 403) {
-        console.error('[YOUTUBE] ❌ API quota exceeded or invalid key');
+        console.error('[YOUTUBE] \u274C API quota exceeded or invalid key');
         break; // Stop all queries if quota hit
       }
-      console.error(`[YOUTUBE] ❌ Search failed for "${q}": ${err.message}`);
+      console.error(`[YOUTUBE] \u274C Search failed for "${q}": ${err.message}`);
     }
   }
 
@@ -151,7 +151,7 @@ async function fetchYouTubeVideos() {
     return true;
   });
 
-  console.log(`[YOUTUBE] ✅ ${unique.length} new relevant videos found`);
+  console.log(`[YOUTUBE] \u2705 ${unique.length} new relevant videos found`);
   return unique;
 }
 
