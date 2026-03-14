@@ -13,7 +13,7 @@ function generateFingerprint(tweetId) {
 async function searchTwitter() {
   const bearerToken = process.env.TWITTER_BEARER_TOKEN;
   if (!bearerToken) {
-    console.log('[TWITTER] ⚠️ Twitter API not configured - skipping');
+    console.log('[TWITTER] \u26A0\uFE0F Twitter API not configured - skipping');
     return [];
   }
 
@@ -86,9 +86,9 @@ async function searchTwitter() {
       });
     }
 
-    console.log(`[TWITTER] ✅ ${tweets.length} tweets scanned, ${results.length} relevant`);
+    console.log(`[TWITTER] \u2705 ${tweets.length} tweets scanned, ${results.length} relevant`);
   } catch (err) {
-    console.error(`[TWITTER] ❌ Search failed: ${err.message}`);
+    console.error(`[TWITTER] \u274C Search failed: ${err.message}`);
   }
 
   return results;
