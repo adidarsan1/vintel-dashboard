@@ -1,7 +1,7 @@
 // RSS Feed Sources for Tamil Nadu News
 module.exports = [
   // ============================================================
-  // SECTION 1 — TAMIL MEDIA OUTLETS
+  // SECTION 1 \u2014 TAMIL MEDIA OUTLETS
   // ============================================================
   {
     name: 'Polimer News',
@@ -59,7 +59,7 @@ module.exports = [
   },
 
   // ============================================================
-  // SECTION 2 — GOOGLE NEWS: VIRUDHUNAGAR DISTRICT SPECIFIC
+  // SECTION 2 \u2014 GOOGLE NEWS: VIRUDHUNAGAR DISTRICT SPECIFIC
   // Tamil keyword searches
   // ============================================================
   {
@@ -68,7 +68,7 @@ module.exports = [
     language: 'ta',
     category: 'google-news',
     district: 'Virudhunagar',
-    queryLabel: 'விருதுநகர் crime'
+    queryLabel: '\u0BB5\u0BBF\u0BB0\u0BC1\u0BA4\u0BC1\u0BA8\u0B95\u0BB0\u0BCD crime'
   },
   {
     name: 'Google News',
@@ -84,7 +84,7 @@ module.exports = [
     language: 'ta',
     category: 'google-news',
     district: 'Virudhunagar',
-    queryLabel: 'விருதுநகர் கொலை'
+    queryLabel: '\u0BB5\u0BBF\u0BB0\u0BC1\u0BA4\u0BC1\u0BA8\u0B95\u0BB0\u0BCD \u0B95\u0BCA\u0BB2\u0BC8'
   },
   {
     name: 'Google News',
@@ -92,7 +92,7 @@ module.exports = [
     language: 'ta',
     category: 'google-news',
     district: 'Virudhunagar',
-    queryLabel: 'விருதுநகர் கலவரம்'
+    queryLabel: '\u0BB5\u0BBF\u0BB0\u0BC1\u0BA4\u0BC1\u0BA8\u0B95\u0BB0\u0BCD \u0B95\u0BB2\u0BB5\u0BB0\u0BAE\u0BCD'
   },
   {
     name: 'Google News',
@@ -108,7 +108,7 @@ module.exports = [
     language: 'ta',
     category: 'google-news',
     district: 'Virudhunagar',
-    queryLabel: 'விருதுநகர் போராட்டம்'
+    queryLabel: '\u0BB5\u0BBF\u0BB0\u0BC1\u0BA4\u0BC1\u0BA8\u0B95\u0BB0\u0BCD \u0BAA\u0BCB\u0BB0\u0BBE\u0B9F\u0BCD\u0B9F\u0BAE\u0BCD'
   },
   {
     name: 'Google News',
@@ -116,11 +116,11 @@ module.exports = [
     language: 'ta',
     category: 'google-news',
     district: 'Virudhunagar',
-    queryLabel: 'விருதுநகர் ஆயுதம்'
+    queryLabel: '\u0BB5\u0BBF\u0BB0\u0BC1\u0BA4\u0BC1\u0BA8\u0B95\u0BB0\u0BCD \u0B86\u0BAF\u0BC1\u0BA4\u0BAE\u0BCD'
   },
 
   // ============================================================
-  // SECTION 3 — GOOGLE NEWS: TALUK-SPECIFIC
+  // SECTION 3 \u2014 GOOGLE NEWS: TALUK-SPECIFIC
   // ============================================================
   {
     name: 'Google News',
