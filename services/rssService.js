@@ -107,14 +107,14 @@ async function fetchAllFeeds() {
         }
       }
 
-      console.log(`[RSS] ✅ ${source.name}: ${items.length} items scanned`);
+      console.log(`[RSS] \u2705 ${source.name}: ${items.length} items scanned`);
     } catch (err) {
-      console.error(`[RSS] ❌ ${source.name} failed: ${err.message}`);
+      console.error(`[RSS] \u274C ${source.name} failed: ${err.message}`);
     }
   });
 
   await Promise.allSettled(feedPromises);
-  console.log(`[RSS] 📊 ${results.length} new relevant items found`);
+  console.log(`[RSS] \uD83D\uDCCA ${results.length} new relevant items found`);
   return results;
 }
 
